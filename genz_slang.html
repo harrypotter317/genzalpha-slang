@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">service_g9jg0dj
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gen Z & Alpha Slang Dictionary</title>
+    <style>
+        :root {
+            --primary-purple: #8A2BE2;
+            --light-purple: #E6E6FA;
+            --dark-purple: #4B0082;
+            --accent-purple: #9370DB;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--light-purple), white);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.2);
+        }
+
+        h1 {
+            color: var(--primary-purple);
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(138, 43, 226, 0.2);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: var(--light-purple);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1em;
+            color: var(--dark-purple);
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-box, .translate-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--accent-purple);
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus, .translate-input:focus {
+            box-shadow: 0 0 10px var(--accent-purple);
+        }
+
+        .slang-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--light-purple);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .slang-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.2);
+        }
+
+        .slang-term {
+            color: var(--primary-purple);
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .slang-definition {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .example {
+            color: var(--accent-purple);
+            font-style: italic;
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--light-purple);
+            border-radius: 8px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: var(--accent-purple);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+
+        /* Add styles for admin buttons */
+        .admin-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .approve-button {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .reject-button {
+            background: #f44336;
+            color: white;
+        }
+
+        .admin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .report-status {
+            float: right;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #FFA500;
+            color: white;
+        }
+
+        .status-approved {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #f44336;
+            color: white;
+        }
+
+        #no-results {
+            text-align: center;
+            color: var(--primary-purple);
+            font-size: 1.2em;
+            display: none;
+        }
+
+        .word-of-day {
+            text-align: center;
+            padding: 30px;
+            background: var(--light-purple);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .translate-output {
+            background: var(--light-purple);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            min-height: 50px;
+        }
+
+        /* Add styles for admin panel */
+        .admin-panel {
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            background: var(--light-purple);
+            color: var(--dark-purple);
+            transition: all 0.3s ease;
+        }
+
+        .filter-button.active {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-title {
+            color: var(--primary-purple);
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .admin-logout {
+            padding: 8px 16px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .admin-logout:hover {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Gen Z & Alpha Slang Dictionary ✨</h1>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="dictionary">Dictionary</button>
+            <button class="tab" data-tab="translator">Translator</button>
+            <button class="tab" data-tab="word-of-day">Word of the Day</button>
+            <button class="tab" data-tab="admin">Admin</button>
+        </div>
+
+        <!-- Dictionary Tab -->
+        <div class="tab-content active" id="dictionary">
+            <input type="text" class="search-box" placeholder="Search for slang terms..." id="searchInput">
+            <div id="slangContainer">
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">💅</span> Slay</div>
+                    <div class="slang-definition">To do something exceptionally well or look amazing</div>
+                    <div class="example">"Your outfit is slaying today!"</div>
+                    <div class="category-tag">Compliment</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">💯</span> No cap</div>
+                    <div class="slang-definition">No lie, being completely honest</div>
+                    <div class="example">"No cap, this is the best pizza I've ever had!"</div>
+                    <div class="category-tag">Truth</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">🔥</span> Fire</div>
+                    <div class="slang-definition">Really good, amazing, or cool</div>
+                    <div class="example">"This new song is fire!"</div>
+                    <div class="category-tag">Compliment</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">💀</span> Dead</div>
+                    <div class="slang-definition">Something is extremely funny or shocking</div>
+                    <div class="example">"I'm dead at that joke!"</div>
+                    <div class="category-tag">Reaction</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">✨</span> Vibe</div>
+                    <div class="slang-definition">A feeling or atmosphere; can also mean to get along with something</div>
+                    <div class="example">"This place has such good vibes!"</div>
+                    <div class="category-tag">Feeling</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">💫</span> Bestie</div>
+                    <div class="slang-definition">Best friend, but used more casually</div>
+                    <div class="example">"Hey bestie, what's up?"</div>
+                    <div class="category-tag">Friendship</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">🤌</span> Fr fr</div>
+                    <div class="slang-definition">For real, for real - emphasizing truth</div>
+                    <div class="example">"Fr fr, this is the best day ever!"</div>
+                    <div class="category-tag">Emphasis</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">💅</span> Period</div>
+                    <div class="slang-definition">Used to emphasize a statement or end a conversation</div>
+                    <div class="example">"That's the tea, period!"</div>
+                    <div class="category-tag">Emphasis</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">😴</span> Lame</div>
+                    <div class="slang-definition">Boring, uncool, or not interesting</div>
+                    <div class="example">"That movie was so lame!"</div>
+                    <div class="category-tag">Criticism</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">👑</span> Sigma</div>
+                    <div class="slang-definition">A confident, independent, and successful person</div>
+                    <div class="example">"He's such a sigma male!"</div>
+                    <div class="category-tag">Personality</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">🎵</span> Skibidi</div>
+                    <div class="slang-definition">A fun, playful expression often used in memes and TikTok</div>
+                    <div class="example">"Skibidi toilet!"</div>
+                    <div class="category-tag">Meme</div>
+                </div>
+
+                <div class="slang-card">
+                    <div class="slang-term"><span class="emoji">🌪️</span> Ohio</div>
+                    <div class="slang-definition">Used to describe something strange, weird, or unexpected</div>
+                    <div class="example">"That's so Ohio!"</div>
+                    <div class="category-tag">Reaction</div>
+                </div>
+            </div>
+            <div id="no-results">No matching slang terms found! 💜</div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="tab" id="reportUnknown">Report Unknown Word</button>
+            </div>
+        </div>
+
+        <!-- Translator Tab -->
+        <div class="tab-content" id="translator">
+            <h2>Gen Z & Alpha Translator</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <button class="tab" id="slangToEng" style="flex: 1;">Slang → English</button>
+                <button class="tab" id="engToSlang" style="flex: 1;">English → Slang</button>
+                <button class="tab" id="engToShortcuts" style="flex: 1;">English → Shortcuts</button>
+                <button class="tab" id="shortcutsToEng" style="flex: 1;">Shortcuts → English</button>
+            </div>
+            <input type="text" class="translate-input" placeholder="Type your text here..." id="translateInput">
+            <div class="translate-output" id="translateOutput"></div>
+            <div id="unknownWordReport" style="display: none; text-align: center; margin-top: 10px;">
+                <button class="tab" id="reportUnknownWord">Report Unknown Word</button>
+            </div>
+        </div>
+
+        <!-- Word of the Day Tab -->
+        <div class="tab-content" id="word-of-day">
+            <div class="word-of-day">
+                <h2>Word of the Day</h2>
+                <div class="slang-term"><span class="emoji">🌟</span> <span id="wordOfDay">Yeet</span></div>
+                <div class="slang-definition">To throw something with force or enthusiasm</div>
+                <div class="example">"I yeeted my phone across the room when I saw the text!"</div>
+                <div class="category-tag">Action</div>
+            </div>
+        </div>
+
+        <!-- Update Admin Panel HTML -->
+        <div class="tab-content" id="admin">
+            <div id="adminLogin" style="text-align: center; padding: 20px;">
+                <h2>Admin Login</h2>
+                <input type="password" class="search-box" placeholder="Enter password" id="adminPassword">
+                <button class="tab" id="loginBtn">Login</button>
+            </div>
+            <div id="adminPanel" style="display: none;" class="admin-panel">
+                <div class="admin-header">
+                    <h2 class="admin-title">Report Management</h2>
+                    <button class="admin-logout" onclick="logoutAdmin()">Logout</button>
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-button active" onclick="filterReports('all')">All Reports</button>
+                    <button class="filter-button" onclick="filterReports('pending')">Pending</button>
+                    <button class="filter-button" onclick="filterReports('approved')">Approved</button>
+                    <button class="filter-button" onclick="filterReports('rejected')">Rejected</button>
+                </div>
+                <div id="reportsList">
+                    <!-- Reports will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Unknown Word Modal -->
+        <div id="unknownWordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="background: white; width: 80%; max-width: 500px; margin: 50px auto; padding: 20px; border-radius: 15px;">
+                <h3>Report Unknown Word</h3>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">Report Type:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="tab" id="reportSlang" style="flex: 1;">Slang</button>
+                        <button class="tab" id="reportShortcut" style="flex: 1;">Shortcut</button>
+                    </div>
+                </div>
+                <input type="text" class="search-box" placeholder="Enter the slang/shortcut..." id="unknownWordInput">
+                <input type="text" class="search-box" placeholder="Enter the meaning..." id="unknownWordMeaning">
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="tab" id="cancelReport">Cancel</button>
+                    <button class="tab" id="submitReport">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Replace Twilio with EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+        // EmailJS Configuration
+        // To get these values:
+        // 1. Go to https://www.emailjs.com/
+        // 2. Sign up for a free account
+        // 3. Create an email service (Gmail is recommended)
+        // 4. Create an email template
+        // 5. Get your public key, service ID, and template ID
+        const EMAILJS_PUBLIC_KEY = "8bdixGlJx9KgxqB554x6l"; // Your EmailJS Public Key
+        const EMAILJS_SERVICE_ID = "service_g9jg0dj"; // Your EmailJS Service ID
+        const EMAILJS_TEMPLATE_ID = "template_f9207ig"; // Your EmailJS Template ID
+
+        // Initialize EmailJS
+        if (EMAILJS_PUBLIC_KEY !== "YOUR_EMAILJS_PUBLIC_KEY") {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+        }
+
+        // Function to send email using EmailJS
+        async function sendEmailReport(word, meaning, type) {
+            if (EMAILJS_PUBLIC_KEY === "YOUR_EMAILJS_PUBLIC_KEY") {
+                console.error('EmailJS is not configured. Please set up your EmailJS credentials.');
+                alert('Email service is not configured. Please set up your EmailJS credentials.');
+                return false;
+            }
+
+            // Create unique links for approve/reject
+            const approveLink = `${window.location.origin}${window.location.pathname}?action=approve&word=${encodeURIComponent(word)}&type=${type}`;
+            const rejectLink = `${window.location.origin}${window.location.pathname}?action=reject&word=${encodeURIComponent(word)}&type=${type}`;
+
+            const templateParams = {
+                to_email: '054hillyr@shamir.school',
+                word: word,
+                meaning: meaning,
+                type: type,
+                timestamp: new Date().toLocaleString(),
+                approve_link: approveLink,
+                reject_link: rejectLink
+            };
+
+            try {
+                console.log('Attempting to send email with params:', templateParams);
+                const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                console.log('EmailJS response:', response);
+                alert('Email sent successfully!');
+                return true;
+            } catch (error) {
+                console.error('Failed to send email. Error details:', error);
+                alert(`Failed to send email. Error: ${error.message || 'Unknown error'}`);
+                return false;
+            }
+        }
+
+        // Function to handle URL parameters for approve/reject actions
+        function handleUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const word = urlParams.get('word');
+            const type = urlParams.get('type');
+
+            if (action && word && type) {
+                const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
+                const reportIndex = reports.findIndex(r => r.word === word && r.type === type);
+
+                if (reportIndex !== -1) {
+                    updateReportStatus(reportIndex, action);
+                    // Remove the parameters from the URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        }
+
+        // Call handleUrlParameters when the page loads
+        document.addEventListener('DOMContentLoaded', handleUrlParameters);
+
+        // Function to save report and send email
+        async function saveReport(word, meaning, type) {
+            const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
+            reports.push({
+                word: word,
+                meaning: meaning,
+                type: type,
+                timestamp: new Date().toISOString(),
+                status: 'sent'  // Changed from 'pending' to 'sent'
+            });
+            localStorage.setItem('unknownWordReports', JSON.stringify(reports));
+            
+            // Send email immediately
+            await sendEmailReport(word, meaning, type);
+        }
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Dictionary search
+        const searchInput = document.getElementById('searchInput');
+        const slangCards = document.querySelectorAll('.slang-card');
+        const noResults = document.getElementById('no-results');
+
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            let hasResults = false;
+
+            slangCards.forEach(card => {
+                const term = card.querySelector('.slang-term').textContent.toLowerCase();
+                const definition = card.querySelector('.slang-definition').textContent.toLowerCase();
+                const example = card.querySelector('.example').textContent.toLowerCase();
+
+                if (term.includes(searchTerm) || 
+                    definition.includes(searchTerm) || 
+                    example.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            noResults.style.display = hasResults ? 'none' : 'block';
+        });
+
+        // Translator
+        const translateInput = document.getElementById('translateInput');
+        const translateOutput = document.getElementById('translateOutput');
+        let currentTranslationMode = 'slangToEng';
+
+        // Translation dictionaries
+        let slangToEngDict = JSON.parse(localStorage.getItem('slangToEngDict')) || {
+            'fr fr': 'very/really',
+            'fire': 'good/great/awesome/cool/nice',
+            'bestie': 'friend',
+            'no cap': 'truth/true',
+            'slay': 'amazing/excellent/perfect',
+            'vibe': 'like/love',
+            'period': 'agree/exactly',
+            'dead': 'funny/hilarious',
+            'yeet': 'throw/toss',
+            'yeeted': 'threw/thrown',
+            'lame': 'boring/uncool/uninteresting',
+            'sigma': 'confident/independent/successful',
+            'skibidi': 'fun/playful expression',
+            'ohio': 'strange/weird/unexpected'
+        };
+
+        let engToSlangDict = JSON.parse(localStorage.getItem('engToSlangDict')) || {
+            'very': 'fr fr',
+            'really': 'fr fr',
+            'good': 'fire',
+            'great': 'fire',
+            'awesome': 'fire',
+            'friend': 'bestie',
+            'truth': 'no cap',
+            'true': 'no cap',
+            'amazing': 'slay',
+            'excellent': 'slay',
+            'cool': 'fire',
+            'nice': 'fire',
+            'perfect': 'slay',
+            'love': 'vibe',
+            'like': 'vibe',
+            'agree': 'period',
+            'exactly': 'period',
+            'funny': 'dead',
+            'hilarious': 'dead',
+            'laughing': 'dead',
+            'throwing': 'yeet',
+            'toss': 'yeet',
+            'throw': 'yeet',
+            'threw': 'yeeted',
+            'thrown': 'yeeted',
+            'boring': 'lame',
+            'uncool': 'lame',
+            'uninteresting': 'lame',
+            'confident': 'sigma',
+            'independent': 'sigma',
+            'successful': 'sigma',
+            'strange': 'ohio',
+            'weird': 'ohio',
+            'unexpected': 'ohio'
+        };
+
+        let engToShortcutsDict = JSON.parse(localStorage.getItem('engToShortcutsDict')) || {
+            'by the way': 'btw',
+            'as soon as possible': 'asap',
+            'in my opinion': 'imo',
+            'laughing out loud': 'lol',
+            'rolling on the floor laughing': 'rofl',
+            'oh my god': 'omg',
+            'greatest of all time': 'goat',
+            'thank you': 'thx',
+            'thanks': 'thx',
+            'thank you very much': 'thx',
+            'you are welcome': 'yw',
+            'for your information': 'fyi',
+            'in real life': 'irl',
+            'to be honest': 'tbh',
+            'in my humble opinion': 'imho',
+            'no problem': 'np',
+            'right now': 'rn',
+            'on my way': 'omw',
+            'too much information': 'tmi',
+            'too much': 'tmi',
+            'way too much information': 'wtmi',
+            'as far as i know': 'afaik',
+            'in my experience': 'ime',
+            'in my view': 'imv',
+            'in my honest opinion': 'imho',
+            'oh my goodness': 'omg',
+            'oh my gosh': 'omg',
+            'laughing my ass off': 'lmao',
+            'rolling on the floor laughing my ass off': 'roflmao',
+            'shaking my head': 'smh',
+            'shaking my damn head': 'smdh',
+            'face to face': 'f2f',
+            'for what it\'s worth': 'fwiw',
+            'if i recall correctly': 'iirc',
+            'if you know what i mean': 'iykwim',
+            'in other words': 'iow',
+            'in my personal opinion': 'impo',
+            'in my not so humble opinion': 'imnsho',
+            'in my very humble opinion': 'imvho',
+            'just kidding': 'jk',
+            'laughing out loud very hard': 'lolvh',
+            'laughing out loud with tears': 'lolwtf',
+            'my two cents': 'm2c',
+            'no offense': 'no',
+            'no offense intended': 'noi',
+            'please': 'pls',
+            'please help': 'pls help',
+            'thank you very much': 'tyvm',
+            'to be perfectly honest': 'tbph',
+            'to be perfectly honest with you': 'tbphy',
+            'you know what i mean': 'ykwim'
+        };
+
+        let shortcutsToEngDict = JSON.parse(localStorage.getItem('shortcutsToEngDict')) || {
+            'btw': 'by the way',
+            'asap': 'as soon as possible',
+            'imo': 'in my opinion',
+            'lol': 'laughing out loud',
+            'rofl': 'rolling on the floor laughing',
+            'omg': 'oh my god',
+            'goat': 'greatest of all time',
+            'thx': 'thank you',
+            'ty': 'thank you',
+            'yw': 'you are welcome',
+            'fyi': 'for your information',
+            'irl': 'in real life',
+            'tbh': 'to be honest',
+            'imho': 'in my humble opinion',
+            'np': 'no problem',
+            'rn': 'right now',
+            'omw': 'on my way',
+            'tmi': 'too much information',
+            'wtmi': 'way too much information',
+            'afaik': 'as far as i know',
+            'ime': 'in my experience',
+            'imv': 'in my view',
+            'lmao': 'laughing my ass off',
+            'roflmao': 'rolling on the floor laughing my ass off',
+            'smh': 'shaking my head',
+            'smdh': 'shaking my damn head',
+            'f2f': 'face to face',
+            'fwiw': 'for what it\'s worth',
+            'iirc': 'if i recall correctly',
+            'iykwim': 'if you know what i mean',
+            'iow': 'in other words',
+            'impo': 'in my personal opinion',
+            'imnsho': 'in my not so humble opinion',
+            'imvho': 'in my very humble opinion',
+            'jk': 'just kidding',
+            'lolvh': 'laughing out loud very hard',
+            'lolwtf': 'laughing out loud with tears',
+            'm2c': 'my two cents',
+            'no': 'no offense',
+            'noi': 'no offense intended',
+            'pls': 'please',
+            'tyvm': 'thank you very much',
+            'tbph': 'to be perfectly honest',
+            'tbphy': 'to be perfectly honest with you',
+            'ykwim': 'you know what i mean'
+        };
+
+        // Function to save dictionaries to localStorage
+        function saveDictionaries() {
+            localStorage.setItem('slangToEngDict', JSON.stringify(slangToEngDict));
+            localStorage.setItem('engToSlangDict', JSON.stringify(engToSlangDict));
+            localStorage.setItem('engToShortcutsDict', JSON.stringify(engToShortcutsDict));
+            localStorage.setItem('shortcutsToEngDict', JSON.stringify(shortcutsToEngDict));
+        }
+
+        function translateText(text, mode) {
+            if (!text) return '';
+            
+            if (mode === 'engToShortcuts') {
+                // For English to Shortcuts, we need to handle phrases
+                text = text.toLowerCase();
+                let result = text;
+                
+                // Sort dictionary by length (longest first) to handle longer phrases first
+                const sortedEntries = Object.entries(engToShortcutsDict)
+                    .sort((a, b) => b[0].length - a[0].length);
+                
+                for (const [phrase, shortcut] of sortedEntries) {
+                    // Use regex to match whole words only
+                    const regex = new RegExp(`\\b${phrase}\\b`, 'gi');
+                    result = result.replace(regex, shortcut);
+                }
+                
+                return result;
+            }
+            
+            const words = text.toLowerCase().split(/\s+/);
+            let dictionary;
+            
+            switch(mode) {
+                case 'slangToEng':
+                    dictionary = slangToEngDict;
+                    break;
+                case 'engToSlang':
+                    dictionary = engToSlangDict;
+                    break;
+                case 'shortcutsToEng':
+                    dictionary = shortcutsToEngDict;
+                    break;
+            }
+
+            let hasUnknownWords = false;
+            const translatedWords = words.map(word => {
+                if (dictionary[word]) {
+                    return dictionary[word];
+                }
+                
+                for (const [key, value] of Object.entries(dictionary)) {
+                    if (word.includes(key)) {
+                        return value;
+                    }
+                }
+                
+                hasUnknownWords = true;
+                return word;
+            });
+
+            const reportButton = document.getElementById('unknownWordReport');
+            reportButton.style.display = hasUnknownWords ? 'block' : 'none';
+            
+            return translatedWords.join(' ');
+        }
+
+        // Handle translation input
+        translateInput.addEventListener('input', function(e) {
+            const text = e.target.value;
+            const translated = translateText(text, currentTranslationMode);
+            translateOutput.textContent = translated;
+        });
+
+        // Handle translation mode switching
+        document.getElementById('slangToEng').addEventListener('click', function() {
+            currentTranslationMode = 'slangToEng';
+            updateTranslationUI();
+        });
+
+        document.getElementById('engToSlang').addEventListener('click', function() {
+            currentTranslationMode = 'engToSlang';
+            updateTranslationUI();
+        });
+
+        document.getElementById('engToShortcuts').addEventListener('click', function() {
+            currentTranslationMode = 'engToShortcuts';
+            updateTranslationUI();
+        });
+
+        document.getElementById('shortcutsToEng').addEventListener('click', function() {
+            currentTranslationMode = 'shortcutsToEng';
+            updateTranslationUI();
+        });
+
+        function updateTranslationUI() {
+            // Update button states
+            document.querySelectorAll('#translator .tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(currentTranslationMode).classList.add('active');
+
+            // Update placeholder text
+            const placeholders = {
+                'slangToEng': 'Type your slang text here...',
+                'engToSlang': 'Type your English text here...',
+                'engToShortcuts': 'Type your English text here...',
+                'shortcutsToEng': 'Type your shortcuts here...'
+            };
+            translateInput.placeholder = placeholders[currentTranslationMode];
+
+            // Update translation
+            translateOutput.textContent = translateText(translateInput.value, currentTranslationMode);
+        }
+
+        // Set initial state
+        document.getElementById('slangToEng').classList.add('active');
+
+        // Unknown Word Report
+        const reportUnknownBtn = document.getElementById('reportUnknown');
+        const unknownWordModal = document.getElementById('unknownWordModal');
+        const unknownWordInput = document.getElementById('unknownWordInput');
+        const unknownWordMeaning = document.getElementById('unknownWordMeaning');
+        const cancelReportBtn = document.getElementById('cancelReport');
+        const submitReportBtn = document.getElementById('submitReport');
+        const reportSlangBtn = document.getElementById('reportSlang');
+        const reportShortcutBtn = document.getElementById('reportShortcut');
+        let currentReportType = 'slang';
+
+        reportUnknownBtn.addEventListener('click', function() {
+            unknownWordModal.style.display = 'block';
+        });
+
+        reportSlangBtn.addEventListener('click', function() {
+            currentReportType = 'slang';
+            reportSlangBtn.classList.add('active');
+            reportShortcutBtn.classList.remove('active');
+            unknownWordInput.placeholder = 'Enter the slang term...';
+            unknownWordMeaning.placeholder = 'Enter the meaning...';
+        });
+
+        reportShortcutBtn.addEventListener('click', function() {
+            currentReportType = 'shortcut';
+            reportShortcutBtn.classList.add('active');
+            reportSlangBtn.classList.remove('active');
+            unknownWordInput.placeholder = 'Enter the shortcut...';
+            unknownWordMeaning.placeholder = 'Enter the full phrase...';
+        });
+
+        cancelReportBtn.addEventListener('click', function() {
+            unknownWordModal.style.display = 'none';
+            unknownWordInput.value = '';
+            unknownWordMeaning.value = '';
+        });
+
+        submitReportBtn.addEventListener('click', async function() {
+            const word = unknownWordInput.value.trim();
+            const meaning = unknownWordMeaning.value.trim();
+            
+            if (word && meaning) {
+                try {
+                    await saveReport(word, meaning, currentReportType);
+                    alert('Thank you for reporting! We will review it and add it to our dictionary.');
+                    unknownWordModal.style.display = 'none';
+                    unknownWordInput.value = '';
+                    unknownWordMeaning.value = '';
+                } catch (error) {
+                    console.error('Failed to save report:', error);
+                    alert('There was an error saving your report. Please try again.');
+                }
+            } else {
+                alert('Please fill in both the term and its meaning.');
+            }
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === unknownWordModal) {
+                unknownWordModal.style.display = 'none';
+            }
+        });
+
+        // Report unknown word from translator
+        document.getElementById('reportUnknownWord').addEventListener('click', function() {
+            const text = translateInput.value;
+            unknownWordInput.value = text;
+            unknownWordModal.style.display = 'block';
+        });
+
+        // Set initial state for report type buttons
+        reportSlangBtn.classList.add('active');
+
+        // Word of the Day
+        const wordsOfDay = [
+            { word: 'Yeet', def: 'To throw something with force or enthusiasm', ex: 'I yeeted my phone across the room when I saw the text!', cat: 'Action' },
+            { word: 'Vibe', def: 'A feeling or atmosphere', ex: 'This place has such good vibes!', cat: 'Feeling' },
+            { word: 'Dead', def: 'Something is extremely funny or shocking', ex: 'I\'m dead at that joke!', cat: 'Reaction' }
+        ];
+
+        function updateWordOfDay() {
+            const word = wordsOfDay[Math.floor(Math.random() * wordsOfDay.length)];
+            document.getElementById('wordOfDay').textContent = word.word;
+            document.querySelector('#word-of-day .slang-definition').textContent = word.def;
+            document.querySelector('#word-of-day .example').textContent = `"${word.ex}"`;
+            document.querySelector('#word-of-day .category-tag').textContent = word.cat;
+        }
+
+        // Update word of day every 24 hours
+        updateWordOfDay();
+
+        // Add Admin functionality
+        const adminPassword = document.getElementById('adminPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const adminLogin = document.getElementById('adminLogin');
+        const adminPanel = document.getElementById('adminPanel');
+        const reportsList = document.getElementById('reportsList');
+
+        // Function to clean up old rejected reports
+        function cleanupRejectedReports() {
+            const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
+            const now = new Date();
+            const oneWeekAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)); // 7 days ago
+            
+            // Filter out rejected reports older than a week
+            const updatedReports = reports.filter(report => {
+                if (report.status === 'rejected') {
+                    const reportDate = new Date(report.timestamp);
+                    return reportDate > oneWeekAgo;
+                }
+                return true;
+            });
+            
+            localStorage.setItem('unknownWordReports', JSON.stringify(updatedReports));
+            return updatedReports;
+        }
+
+        // Function to display reports
+        function displayReports() {
+            // Clean up old rejected reports before displaying
+            const reports = cleanupRejectedReports();
+            reportsList.innerHTML = '';
+            
+            reports.forEach((report, index) => {
+                const reportCard = document.createElement('div');
+                reportCard.className = 'slang-card';
+                
+                // Add status indicator
+                let statusClass = 'status-pending';
+                if (report.status === 'approved') statusClass = 'status-approved';
+                if (report.status === 'rejected') statusClass = 'status-rejected';
+                
+                reportCard.innerHTML = `
+                    <div class="slang-term">
+                        <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
+                        ${report.word}
+                        <span class="report-status ${statusClass}">
+                            ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                        </span>
+                    </div>
+                    <div class="slang-definition">${report.meaning}</div>
+                    <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
+                    ${report.status === 'sent' ? `
+                        <div class="admin-buttons">
+                            <button class="admin-button approve-button" onclick="updateReportStatus(${index}, 'approved')">Approve</button>
+                            <button class="admin-button reject-button" onclick="updateReportStatus(${index}, 'rejected')">Reject</button>
+                        </div>
+                    ` : ''}
+                `;
+                reportsList.appendChild(reportCard);
+            });
+        }
+
+        // Function to update report status
+        window.updateReportStatus = function(index, status) {
+            const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
+            if (reports[index]) {
+                reports[index].status = status;
+                localStorage.setItem('unknownWordReports', JSON.stringify(reports));
+                
+                // If approved, add to dictionary and translator
+                if (status === 'approved') {
+                    const report = reports[index];
+                    
+                    // Add to dictionary
+                    const slangContainer = document.getElementById('slangContainer');
+                    const newCard = document.createElement('div');
+                    newCard.className = 'slang-card';
+                    newCard.innerHTML = `
+                        <div class="slang-term">
+                            <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
+                            ${report.word}
+                        </div>
+                        <div class="slang-definition">${report.meaning}</div>
+                        <div class="example">"${report.word}" - ${report.meaning}</div>
+                        <div class="category-tag">${report.type === 'slang' ? 'Slang' : 'Shortcut'}</div>
+                    `;
+                    slangContainer.appendChild(newCard);
+                    
+                    // Add to translator dictionaries
+                    if (report.type === 'slang') {
+                        // Add to slang-to-English dictionary
+                        slangToEngDict[report.word.toLowerCase()] = report.meaning.toLowerCase();
+                        // Add to English-to-slang dictionary
+                        engToSlangDict[report.meaning.toLowerCase()] = report.word.toLowerCase();
+                        console.log('Added to slang dictionaries:', report.word, report.meaning);
+                    } else {
+                        // Add to English-to-shortcuts dictionary
+                        engToShortcutsDict[report.meaning.toLowerCase()] = report.word.toLowerCase();
+                        // Add to shortcuts-to-English dictionary
+                        shortcutsToEngDict[report.word.toLowerCase()] = report.meaning.toLowerCase();
+                        console.log('Added to shortcut dictionaries:', report.word, report.meaning);
+                    }
+                    
+                    // Save dictionaries to localStorage
+                    saveDictionaries();
+                    
+                    // Force a refresh of the translation if there's text in the input
+                    if (translateInput.value) {
+                        translateOutput.textContent = translateText(translateInput.value, currentTranslationMode);
+                    }
+                }
+                
+                displayReports();
+                
+                // Show confirmation message
+                const statusMessage = status === 'approved' ? 'approved and added to dictionary' : 'rejected';
+                alert(`Report has been ${statusMessage}!`);
+            }
+        };
+
+        // Add logout function
+        window.logoutAdmin = function() {
+            adminLogin.style.display = 'block';
+            adminPanel.style.display = 'none';
+            adminPassword.value = '';
+        };
+
+        // Update filter reports function
+        window.filterReports = function(status) {
+            // Update filter buttons
+            document.querySelectorAll('.filter-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Clean up old rejected reports before filtering
+            const reports = cleanupRejectedReports();
+            reportsList.innerHTML = '';
+            
+            const filteredReports = status === 'all' 
+                ? reports 
+                : reports.filter(report => report.status === status);
+            
+            if (filteredReports.length === 0) {
+                reportsList.innerHTML = '<div class="slang-card">No reports found</div>';
+                return;
+            }
+            
+            filteredReports.forEach((report, index) => {
+                const reportCard = document.createElement('div');
+                reportCard.className = 'slang-card';
+                
+                // Add status indicator
+                let statusClass = 'status-pending';
+                if (report.status === 'approved') statusClass = 'status-approved';
+                if (report.status === 'rejected') statusClass = 'status-rejected';
+                
+                reportCard.innerHTML = `
+                    <div class="slang-term">
+                        <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
+                        ${report.word}
+                        <span class="report-status ${statusClass}">
+                            ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                        </span>
+                    </div>
+                    <div class="slang-definition">${report.meaning}</div>
+                    <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
+                    ${report.status === 'sent' ? `
+                        <div class="admin-buttons">
+                            <button class="admin-button approve-button" onclick="updateReportStatus(${index}, 'approved')">Approve</button>
+                            <button class="admin-button reject-button" onclick="updateReportStatus(${index}, 'rejected')">Reject</button>
+                        </div>
+                    ` : ''}
+                `;
+                reportsList.appendChild(reportCard);
+            });
+        };
+
+        // Set initial filter to 'all' when logging in
+        loginBtn.addEventListener('click', function() {
+            const password = adminPassword.value;
+            if (password === '0804' || password === '2512') {
+                adminLogin.style.display = 'none';
+                adminPanel.style.display = 'block';
+                filterReports('all');
+            } else {
+                alert('Incorrect password');
+            }
+        });
+    </script>
+</body>
+</html> 
