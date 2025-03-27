@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gen Z & Alpha Slang Dictionary</title>
+    <!-- Remove Firebase SDK -->
     <style>
         :root {
             --primary-purple: #8A2BE2;
@@ -337,7 +338,7 @@
                 </div>
 
                 <div class="slang-card">
-                    <div class="slang-term"><span class="emoji">💅</span> Period</div>
+                    <div class="slang-term"><span class="emoji">��</span> Period</div>
                     <div class="slang-definition">Used to emphasize a statement or end a conversation</div>
                     <div class="example">"That's the tea, period!"</div>
                     <div class="category-tag">Emphasis</div>
@@ -528,19 +529,200 @@
 
         // Function to save report and send email
         async function saveReport(word, meaning, type) {
-            const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
-            reports.push({
+            const report = {
                 word: word,
                 meaning: meaning,
-                type: type,
-                timestamp: new Date().toISOString(),
-                status: 'sent'  // Changed from 'pending' to 'sent'
-            });
-            localStorage.setItem('unknownWordReports', JSON.stringify(reports));
-            
-            // Send email immediately
-            await sendEmailReport(word, meaning, type);
+                type: type
+            };
+
+            try {
+                // Save to server
+                const response = await fetch('https://10af8d3e-215b-4ae4-a6ca-a016f2c3bb62-00-1hb3wfm25lapk.sisko.replit.dev/reports', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(report)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save report');
+                }
+                
+                // Send email immediately
+                await sendEmailReport(word, meaning, type);
+                
+                // Show success message
+                alert('Report submitted successfully!');
+            } catch (error) {
+                console.error('Error saving report:', error);
+                alert('Error saving report. Please try again.');
+            }
         }
+
+        // Function to display reports
+        async function displayReports() {
+            try {
+                const response = await fetch('https://10af8d3e-215b-4ae4-a6ca-a016f2c3bb62-00-1hb3wfm25lapk.sisko.replit.dev/reports');
+                const reports = await response.json();
+
+                reportsList.innerHTML = '';
+                
+                reports.forEach((report) => {
+                    const reportCard = document.createElement('div');
+                    reportCard.className = 'slang-card';
+                    
+                    // Add status indicator
+                    let statusClass = 'status-pending';
+                    if (report.status === 'approved') statusClass = 'status-approved';
+                    if (report.status === 'rejected') statusClass = 'status-rejected';
+                    
+                    reportCard.innerHTML = `
+                        <div class="slang-term">
+                            <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
+                            ${report.word}
+                            <span class="report-status ${statusClass}">
+                                ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                            </span>
+                        </div>
+                        <div class="slang-definition">${report.meaning}</div>
+                        <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
+                        ${report.status === 'sent' ? `
+                            <div class="admin-buttons">
+                                <button class="admin-button approve-button" onclick="updateReportStatus('${report.id}', 'approved')">Approve</button>
+                                <button class="admin-button reject-button" onclick="updateReportStatus('${report.id}', 'rejected')">Reject</button>
+                            </div>
+                        ` : ''}
+                    `;
+                    reportsList.appendChild(reportCard);
+                });
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+                reportsList.innerHTML = '<div class="slang-card">Error loading reports</div>';
+            }
+        }
+
+        // Function to update report status
+        window.updateReportStatus = async function(reportId, status) {
+            try {
+                const response = await fetch(`https://10af8d3e-215b-4ae4-a6ca-a016f2c3bb62-00-1hb3wfm25lapk.sisko.replit.dev/reports/${reportId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update report');
+                }
+
+                // If approved, add to dictionary and translator
+                if (status === 'approved') {
+                    const reportResponse = await fetch(`https://10af8d3e-215b-4ae4-a6ca-a016f2c3bb62-00-1hb3wfm25lapk.sisko.replit.dev/reports/${reportId}`);
+                    const report = await reportResponse.json();
+                    
+                    // Add to dictionary
+                    const slangContainer = document.getElementById('slangContainer');
+                    const newCard = document.createElement('div');
+                    newCard.className = 'slang-card';
+                    newCard.innerHTML = `
+                        <div class="slang-term">
+                            <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
+                            ${report.word}
+                        </div>
+                        <div class="slang-definition">${report.meaning}</div>
+                        <div class="example">"${report.word}" - ${report.meaning}</div>
+                        <div class="category-tag">${report.type === 'slang' ? 'Slang' : 'Shortcut'}</div>
+                    `;
+                    slangContainer.appendChild(newCard);
+                    
+                    // Add to translator dictionaries
+                    if (report.type === 'slang') {
+                        slangToEngDict[report.word.toLowerCase()] = report.meaning.toLowerCase();
+                        engToSlangDict[report.meaning.toLowerCase()] = report.word.toLowerCase();
+                    } else {
+                        engToShortcutsDict[report.meaning.toLowerCase()] = report.word.toLowerCase();
+                        shortcutsToEngDict[report.word.toLowerCase()] = report.meaning.toLowerCase();
+                    }
+                    
+                    // Save dictionaries to localStorage
+                    saveDictionaries();
+                    
+                    // Force a refresh of the translation if there's text in the input
+                    if (translateInput.value) {
+                        translateOutput.textContent = translateText(translateInput.value, currentTranslationMode);
+                    }
+                }
+                
+                // Refresh reports display
+                displayReports();
+                
+                // Show confirmation message
+                const statusMessage = status === 'approved' ? 'approved and added to dictionary' : 'rejected';
+                alert(`Report has been ${statusMessage}!`);
+            } catch (error) {
+                console.error('Error updating report:', error);
+                alert('Error updating report. Please try again.');
+            }
+        };
+
+        // Function to filter reports
+        window.filterReports = async function(status) {
+            // Update filter buttons
+            document.querySelectorAll('.filter-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            try {
+                const response = await fetch('https://10af8d3e-215b-4ae4-a6ca-a016f2c3bb62-00-1hb3wfm25lapk.sisko.replit.dev/reports');
+                const reports = await response.json();
+                
+                const filteredReports = status === 'all' 
+                    ? reports 
+                    : reports.filter(report => report.status === status);
+
+                reportsList.innerHTML = '';
+                
+                if (filteredReports.length === 0) {
+                    reportsList.innerHTML = '<div class="slang-card">No reports found</div>';
+                    return;
+                }
+                
+                filteredReports.forEach((report) => {
+                    const reportCard = document.createElement('div');
+                    reportCard.className = 'slang-card';
+                    
+                    // Add status indicator
+                    let statusClass = 'status-pending';
+                    if (report.status === 'approved') statusClass = 'status-approved';
+                    if (report.status === 'rejected') statusClass = 'status-rejected';
+                    
+                    reportCard.innerHTML = `
+                        <div class="slang-term">
+                            <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
+                            ${report.word}
+                            <span class="report-status ${statusClass}">
+                                ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                            </span>
+                        </div>
+                        <div class="slang-definition">${report.meaning}</div>
+                        <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
+                        ${report.status === 'sent' ? `
+                            <div class="admin-buttons">
+                                <button class="admin-button approve-button" onclick="updateReportStatus('${report.id}', 'approved')">Approve</button>
+                                <button class="admin-button reject-button" onclick="updateReportStatus('${report.id}', 'rejected')">Reject</button>
+                            </div>
+                        ` : ''}
+                    `;
+                    reportsList.appendChild(reportCard);
+                });
+            } catch (error) {
+                console.error('Error filtering reports:', error);
+                reportsList.innerHTML = '<div class="slang-card">Error loading reports</div>';
+            }
+        };
 
         // Tab switching
         const tabs = document.querySelectorAll('.tab');
@@ -960,175 +1142,53 @@
         const adminPanel = document.getElementById('adminPanel');
         const reportsList = document.getElementById('reportsList');
 
-        // Function to clean up old rejected reports
-        function cleanupRejectedReports() {
-            const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
-            const now = new Date();
-            const oneWeekAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)); // 7 days ago
-            
-            // Filter out rejected reports older than a week
-            const updatedReports = reports.filter(report => {
-                if (report.status === 'rejected') {
-                    const reportDate = new Date(report.timestamp);
-                    return reportDate > oneWeekAgo;
-                }
-                return true;
-            });
-            
-            localStorage.setItem('unknownWordReports', JSON.stringify(updatedReports));
-            return updatedReports;
-        }
-
         // Function to display reports
-        function displayReports() {
-            // Clean up old rejected reports before displaying
-            const reports = cleanupRejectedReports();
-            reportsList.innerHTML = '';
-            
-            reports.forEach((report, index) => {
-                const reportCard = document.createElement('div');
-                reportCard.className = 'slang-card';
-                
-                // Add status indicator
-                let statusClass = 'status-pending';
-                if (report.status === 'approved') statusClass = 'status-approved';
-                if (report.status === 'rejected') statusClass = 'status-rejected';
-                
-                reportCard.innerHTML = `
-                    <div class="slang-term">
-                        <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
-                        ${report.word}
-                        <span class="report-status ${statusClass}">
-                            ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
-                        </span>
-                    </div>
-                    <div class="slang-definition">${report.meaning}</div>
-                    <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
-                    ${report.status === 'sent' ? `
-                        <div class="admin-buttons">
-                            <button class="admin-button approve-button" onclick="updateReportStatus(${index}, 'approved')">Approve</button>
-                            <button class="admin-button reject-button" onclick="updateReportStatus(${index}, 'rejected')">Reject</button>
-                        </div>
-                    ` : ''}
-                `;
-                reportsList.appendChild(reportCard);
-            });
-        }
+        async function displayReports() {
+            try {
+                const response = await fetch('https://10af8d3e-215b-4ae4-a6ca-a016f2c3bb62-00-1hb3wfm25lapk.sisko.replit.dev/reports');
+                const reports = await response.json();
 
-        // Function to update report status
-        window.updateReportStatus = function(index, status) {
-            const reports = JSON.parse(localStorage.getItem('unknownWordReports') || '[]');
-            if (reports[index]) {
-                reports[index].status = status;
-                localStorage.setItem('unknownWordReports', JSON.stringify(reports));
+                reportsList.innerHTML = '';
                 
-                // If approved, add to dictionary and translator
-                if (status === 'approved') {
-                    const report = reports[index];
+                reports.forEach((report) => {
+                    const reportCard = document.createElement('div');
+                    reportCard.className = 'slang-card';
                     
-                    // Add to dictionary
-                    const slangContainer = document.getElementById('slangContainer');
-                    const newCard = document.createElement('div');
-                    newCard.className = 'slang-card';
-                    newCard.innerHTML = `
+                    // Add status indicator
+                    let statusClass = 'status-pending';
+                    if (report.status === 'approved') statusClass = 'status-approved';
+                    if (report.status === 'rejected') statusClass = 'status-rejected';
+                    
+                    reportCard.innerHTML = `
                         <div class="slang-term">
                             <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
                             ${report.word}
+                            <span class="report-status ${statusClass}">
+                                ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
+                            </span>
                         </div>
                         <div class="slang-definition">${report.meaning}</div>
-                        <div class="example">"${report.word}" - ${report.meaning}</div>
-                        <div class="category-tag">${report.type === 'slang' ? 'Slang' : 'Shortcut'}</div>
+                        <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
+                        ${report.status === 'sent' ? `
+                            <div class="admin-buttons">
+                                <button class="admin-button approve-button" onclick="updateReportStatus('${report.id}', 'approved')">Approve</button>
+                                <button class="admin-button reject-button" onclick="updateReportStatus('${report.id}', 'rejected')">Reject</button>
+                            </div>
+                        ` : ''}
                     `;
-                    slangContainer.appendChild(newCard);
-                    
-                    // Add to translator dictionaries
-                    if (report.type === 'slang') {
-                        // Add to slang-to-English dictionary
-                        slangToEngDict[report.word.toLowerCase()] = report.meaning.toLowerCase();
-                        // Add to English-to-slang dictionary
-                        engToSlangDict[report.meaning.toLowerCase()] = report.word.toLowerCase();
-                        console.log('Added to slang dictionaries:', report.word, report.meaning);
-                    } else {
-                        // Add to English-to-shortcuts dictionary
-                        engToShortcutsDict[report.meaning.toLowerCase()] = report.word.toLowerCase();
-                        // Add to shortcuts-to-English dictionary
-                        shortcutsToEngDict[report.word.toLowerCase()] = report.meaning.toLowerCase();
-                        console.log('Added to shortcut dictionaries:', report.word, report.meaning);
-                    }
-                    
-                    // Save dictionaries to localStorage
-                    saveDictionaries();
-                    
-                    // Force a refresh of the translation if there's text in the input
-                    if (translateInput.value) {
-                        translateOutput.textContent = translateText(translateInput.value, currentTranslationMode);
-                    }
-                }
-                
-                displayReports();
-                
-                // Show confirmation message
-                const statusMessage = status === 'approved' ? 'approved and added to dictionary' : 'rejected';
-                alert(`Report has been ${statusMessage}!`);
+                    reportsList.appendChild(reportCard);
+                });
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+                reportsList.innerHTML = '<div class="slang-card">Error loading reports</div>';
             }
-        };
+        }
 
         // Add logout function
         window.logoutAdmin = function() {
             adminLogin.style.display = 'block';
             adminPanel.style.display = 'none';
             adminPassword.value = '';
-        };
-
-        // Update filter reports function
-        window.filterReports = function(status) {
-            // Update filter buttons
-            document.querySelectorAll('.filter-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // Clean up old rejected reports before filtering
-            const reports = cleanupRejectedReports();
-            reportsList.innerHTML = '';
-            
-            const filteredReports = status === 'all' 
-                ? reports 
-                : reports.filter(report => report.status === status);
-            
-            if (filteredReports.length === 0) {
-                reportsList.innerHTML = '<div class="slang-card">No reports found</div>';
-                return;
-            }
-            
-            filteredReports.forEach((report, index) => {
-                const reportCard = document.createElement('div');
-                reportCard.className = 'slang-card';
-                
-                // Add status indicator
-                let statusClass = 'status-pending';
-                if (report.status === 'approved') statusClass = 'status-approved';
-                if (report.status === 'rejected') statusClass = 'status-rejected';
-                
-                reportCard.innerHTML = `
-                    <div class="slang-term">
-                        <span class="emoji">${report.type === 'slang' ? '💬' : '⌨️'}</span>
-                        ${report.word}
-                        <span class="report-status ${statusClass}">
-                            ${report.status.charAt(0).toUpperCase() + report.status.slice(1)}
-                        </span>
-                    </div>
-                    <div class="slang-definition">${report.meaning}</div>
-                    <div class="example">Reported on: ${new Date(report.timestamp).toLocaleString()}</div>
-                    ${report.status === 'sent' ? `
-                        <div class="admin-buttons">
-                            <button class="admin-button approve-button" onclick="updateReportStatus(${index}, 'approved')">Approve</button>
-                            <button class="admin-button reject-button" onclick="updateReportStatus(${index}, 'rejected')">Reject</button>
-                        </div>
-                    ` : ''}
-                `;
-                reportsList.appendChild(reportCard);
-            });
         };
 
         // Set initial filter to 'all' when logging in
